@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirBnB Database ER Diagram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .er-diagram {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f8f9fa 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f8f9fa 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: visible;
+        }
+        
+        .entity {
+            position: absolute;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 3px solid #3498db;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .entity:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
+        
+        .entity-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .attribute {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #34495e;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        .primary-key {
+            font-weight: bold;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        .foreign-key {
+            font-style: italic;
+            color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+        
+        .relationship-line {
+            position: absolute;
+            background: #2c3e50;
+            z-index: 1;
+        }
+        
+        .relationship-label {
+            position: absolute;
+            background: white;
+            padding: 4px 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #2c3e50;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        /* Entity positions */
+        .user { top: 50px; left: 50px; }
+        .property { top: 50px; left: 350px; }
+        .booking { top: 300px; left: 200px; }
+        .payment { top: 500px; left: 50px; }
+        .review { top: 500px; left: 400px; }
+        .message { top: 300px; left: 600px; }
+        
+        /* Relationship lines */
+        .line-user-property {
+            top: 120px;
+            left: 250px;
+            width: 100px;
+            height: 3px;
+        }
+        
+        .line-user-booking {
+            top: 200px;
+            left: 150px;
+            width: 3px;
+            height: 100px;
+        }
+        
+        .line-property-booking {
+            top: 200px;
+            left: 350px;
+            width: 3px;
+            height: 100px;
+        }
+        
+        .line-booking-payment {
+            top: 400px;
+            left: 150px;
+            width: 3px;
+            height: 100px;
+        }
+        
+        .line-user-review {
+            top: 200px;
+            left: 150px;
+            width: 350px;
+            height: 3px;
+        }
+        
+        .line-property-review {
+            top: 200px;
+            left: 450px;
+            width: 3px;
+            height: 300px;
+        }
+        
+        .line-user-message-sender {
+            top: 200px;
+            left: 250px;
+            width: 350px;
+            height: 3px;
+        }
+        
+        .line-user-message-recipient {
+            top: 180px;
+            left: 250px;
+            width: 370px;
+            height: 3px;
+        }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+            border-radius: 10px;
+            border: 2px solid #bdc3c7;
+        }
+        
+        .legend h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin: 5px 15px 5px 0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .cardinality {
+            position: absolute;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #e74c3c;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 AirBnB Database Entity-Relationship Diagram</h1>
+        
+        <div class="er-diagram">
+            <!-- User Entity -->
+            <div class="entity user">
+                <div class="entity-name">USER</div>
+                <div class="attribute primary-key">🔑 user_id (UUID)</div>
+                <div class="attribute">first_name (VARCHAR)</div>
+                <div class="attribute">last_name (VARCHAR)</div>
+                <div class="attribute">email (VARCHAR, UNIQUE)</div>
+                <div class="attribute">password_hash (VARCHAR)</div>
+                <div class="attribute">phone_number (VARCHAR)</div>
+                <div class="attribute">role (ENUM)</div>
+                <div class="attribute">created_at (TIMESTAMP)</div>
+            </div>
+            
+            <!-- Property Entity -->
+            <div class="entity property">
+                <div class="entity-name">PROPERTY</div>
+                <div class="attribute primary-key">🔑 property_id (UUID)</div>
+                <div class="attribute foreign-key">🔗 host_id (FK → User)</div>
+                <div class="attribute">name (VARCHAR)</div>
+                <div class="attribute">description (TEXT)</div>
+                <div class="attribute">location (VARCHAR)</div>
+                <div class="attribute">price_per_night (DECIMAL)</div>
+                <div class="attribute">created_at (TIMESTAMP)</div>
+                <div class="attribute">updated_at (TIMESTAMP)</div>
+            </div>
+            
+            <!-- Booking Entity -->
+            <div class="entity booking">
+                <div class="entity-name">BOOKING</div>
+                <div class="attribute primary-key">🔑 booking_id (UUID)</div>
+                <div class="attribute foreign-key">🔗 property_id (FK → Property)</div>
+                <div class="attribute foreign-key">🔗 user_id (FK → User)</div>
+                <div class="attribute">start_date (DATE)</div>
+                <div class="attribute">end_date (DATE)</div>
+                <div class="attribute">total_price (DECIMAL)</div>
+                <div class="attribute">status (ENUM)</div>
+                <div class="attribute">created_at (TIMESTAMP)</div>
+            </div>
+            
+            <!-- Payment Entity -->
+            <div class="entity payment">
+                <div class="entity-name">PAYMENT</div>
+                <div class="attribute primary-key">🔑 payment_id (UUID)</div>
+                <div class="attribute foreign-key">🔗 booking_id (FK → Booking)</div>
+                <div class="attribute">amount (DECIMAL)</div>
+                <div class="attribute">payment_date (TIMESTAMP)</div>
+                <div class="attribute">payment_method (ENUM)</div>
+            </div>
+            
+            <!-- Review Entity -->
+            <div class="entity review">
+                <div class="entity-name">REVIEW</div>
+                <div class="attribute primary-key">🔑 review_id (UUID)</div>
+                <div class="attribute foreign-key">🔗 property_id (FK → Property)</div>
+                <div class="attribute foreign-key">🔗 user_id (FK → User)</div>
+                <div class="attribute">rating (INTEGER, 1-5)</div>
+                <div class="attribute">comment (TEXT)</div>
+                <div class="attribute">created_at (TIMESTAMP)</div>
+            </div>
+            
+            <!-- Message Entity -->
+            <div class="entity message">
+                <div class="entity-name">MESSAGE</div>
+                <div class="attribute primary-key">🔑 message_id (UUID)</div>
+                <div class="attribute foreign-key">🔗 sender_id (FK → User)</div>
+                <div class="attribute foreign-key">🔗 recipient_id (FK → User)</div>
+                <div class="attribute">message_body (TEXT)</div>
+                <div class="attribute">sent_at (TIMESTAMP)</div>
+            </div>
+            
+            <!-- Relationship Lines -->
+            <div class="relationship-line line-user-property"></div>
+            <div class="relationship-label" style="top: 110px; left: 275px;">hosts</div>
+            <div class="cardinality" style="top: 100px; left: 230px;">1</div>
+            <div class="cardinality" style="top: 100px; left: 320px;">M</div>
+            
+            <div class="relationship-line line-user-booking"></div>
+            <div class="relationship-label" style="top: 240px; left: 100px;">makes</div>
+            <div class="cardinality" style="top: 180px; left: 130px;">1</div>
+            <div class="cardinality" style="top: 280px; left: 130px;">M</div>
+            
+            <div class="relationship-line line-property-booking"></div>
+            <div class="relationship-label" style="top: 240px; left: 300px;">booked_for</div>
+            <div class="cardinality" style="top: 180px; left: 330px;">1</div>
+            <div class="cardinality" style="top: 280px; left: 330px;">M</div>
+            
+            <div class="relationship-line line-booking-payment"></div>
+            <div class="relationship-label" style="top: 440px; left: 100px;">paid_by</div>
+            <div class="cardinality" style="top: 380px; left: 130px;">1</div>
+            <div class="cardinality" style="top: 480px; left: 130px;">1</div>
+            
+            <div class="relationship-line line-user-review"></div>
+            <div class="relationship-label" style="top: 190px; left: 300px;">writes</div>
+            <div class="cardinality" style="top: 180px; left: 230px;">1</div>
+            <div class="cardinality" style="top: 180px; left: 480px;">M</div>
+            
+            <div class="relationship-line line-property-review"></div>
+            <div class="relationship-label" style="top: 350px; left: 420px;">reviewed_for</div>
+            <div class="cardinality" style="top: 180px; left: 430px;">1</div>
+            <div class="cardinality" style="top: 480px; left: 430px;">M</div>
+            
+            <div class="relationship-line line-user-message-sender"></div>
+            <div class="relationship-label" style="top: 190px; left: 400px;">sends</div>
+            <div class="cardinality" style="top: 180px; left: 230px;">1</div>
+            <div class="cardinality" style="top: 180px; left: 580px;">M</div>
+            
+            <div class="relationship-line line-user-message-recipient"></div>
+            <div class="relationship-label" style="top: 170px; left: 400px;">receives</div>
+            <div class="cardinality" style="top: 160px; left: 230px;">1</div>
+            <div class="cardinality" style="top: 160px; left: 600px;">M</div>
+        </div>
+        
+        <div class="legend">
+            <h3>📋 Legend</h3>
+            <div class="legend-item primary-key">🔑 Primary Key</div>
+            <div class="legend-item foreign-key">🔗 Foreign Key</div>
+            <div class="legend-item" style="background: rgba(52, 152, 219, 0.05);">Regular Attribute</div>
+            
+            <h4 style="margin-top: 20px; color: #2c3e50;">Relationship Cardinalities:</h4>
+            <p><strong>1:M</strong> = One-to-Many | <strong>1:1</strong> = One-to-One</p>
+            
+            <h4 style="color: #2c3e50;">Key Relationships:</h4>
+            <ul style="color: #34495e;">
+                <li><strong>User hosts Property</strong>: One user can host multiple properties (1:M)</li>
+                <li><strong>User makes Booking</strong>: One user can make multiple bookings (1:M)</li>
+                <li><strong>Property booked_for Booking</strong>: One property can have multiple bookings (1:M)</li>
+                <li><strong>Booking paid_by Payment</strong>: Each booking has exactly one payment (1:1)</li>
+                <li><strong>User writes Review</strong>: One user can write multiple reviews (1:M)</li>
+                <li><strong>Property reviewed_for Review</strong>: One property can have multiple reviews (1:M)</li>
+                <li><strong>User sends/receives Message</strong>: One user can send/receive multiple messages (1:M)</li>
+            </ul>
+            
+            <h4 style="color: #2c3e50;">Important Constraints:</h4>
+            <ul style="color: #34495e;">
+                <li>User email must be unique</li>
+                <li>Review rating must be between 1-5</li>
+                <li>Booking status: pending, confirmed, or canceled</li>
+                <li>Payment method: credit_card, paypal, or stripe</li>
+                <li>User role: guest, host, or admin</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
