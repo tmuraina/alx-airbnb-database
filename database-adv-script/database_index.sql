@@ -1,3 +1,8 @@
+-- =====================================================
+-- ALX Airbnb Database - Index Optimization Script
+-- Task 3: Implement Indexes for Optimization
+-- File: database_index.sql
+-- =====================================================
 
 -- =====================================================
 -- ANALYSIS OF HIGH-USAGE COLUMNS
@@ -157,15 +162,68 @@ CREATE INDEX idx_property_performance ON Booking(property_id, created_at, status
 -- INDEX MAINTENANCE COMMANDS
 -- =====================================================
 
--- Commands to analyze index usage (MySQL specific)
--- SHOW INDEX FROM User;
--- SHOW INDEX FROM Property;
--- SHOW INDEX FROM Booking;
--- SHOW INDEX FROM Review;
+-- =====================================================
+-- PERFORMANCE TESTING QUERIES - AFTER INDEX CREATION
+-- =====================================================
 
--- Commands to check index statistics (PostgreSQL specific)
--- SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch 
--- FROM pg_stat_user_indexes ORDER BY idx_scan DESC;
+-- Measure query performance AFTER creating indexes
+-- Compare these results with the BEFORE measurements above
+
+-- Query 1: User login lookup (AFTER index)
+EXPLAIN ANALYZE SELECT * FROM User WHERE email = 'user@example.com';
+
+-- Query 2: Property search by location and price (AFTER index)
+EXPLAIN ANALYZE SELECT * FROM Property 
+WHERE location = 'New York' AND pricepernight BETWEEN 100 AND 300
+ORDER BY pricepernight;
+
+-- Query 3: Booking availability check (AFTER index)
+EXPLAIN ANALYZE SELECT property_id FROM Booking 
+WHERE property_id = 123 
+AND start_date <= '2024-12-31' AND end_date >= '2024-12-01'
+AND status = 'confirmed';
+
+-- Query 4: User booking history with JOIN (AFTER index)
+EXPLAIN ANALYZE SELECT b.*, p.name FROM Booking b 
+JOIN Property p ON b.property_id = p.property_id
+WHERE b.user_id = 456 ORDER BY b.start_date DESC;
+
+-- Query 5: Property reviews with rating aggregation (AFTER index)
+EXPLAIN ANALYZE SELECT AVG(rating), COUNT(*) FROM Review 
+WHERE property_id = 789 AND rating >= 4;
+
+-- =====================================================
+-- ADDITIONAL PERFORMANCE ANALYSIS QUERIES
+-- =====================================================
+
+-- Complex JOIN query performance test
+EXPLAIN ANALYZE SELECT 
+    b.booking_id,
+    u.first_name,
+    u.last_name,
+    p.name AS property_name,
+    p.location,
+    r.rating
+FROM Booking b
+    JOIN User u ON b.user_id = u.user_id
+    JOIN Property p ON b.property_id = p.property_id
+    LEFT JOIN Review r ON p.property_id = r.property_id
+WHERE b.status = 'confirmed'
+    AND p.location = 'Los Angeles'
+    AND b.start_date >= '2024-01-01'
+ORDER BY b.created_at DESC
+LIMIT 100;
+
+-- Monthly booking analysis performance test
+EXPLAIN ANALYZE SELECT 
+    DATE_FORMAT(created_at, '%Y-%m') as month,
+    COUNT(*) as booking_count,
+    AVG(total_price) as avg_price
+FROM Booking 
+WHERE status IN ('confirmed', 'completed')
+    AND created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+ORDER BY month DESC;
 
 -- =====================================================
 -- PERFORMANCE TESTING QUERIES
