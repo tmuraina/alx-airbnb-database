@@ -17,13 +17,10 @@ SELECT p.id AS property_id,
        r.rating,
        r.comment
 FROM properties p
-LEFT JOIN reviews r ON p.id = r.property_id;
+LEFT JOIN reviews r ON p.id = r.property_id
+ORDER BY p.id;   -- ✅ Added ORDER BY so results are sorted by property
 
 -- 3. FULL OUTER JOIN: Retrieve all users and all bookings
--- Note: MySQL does not support FULL OUTER JOIN directly.
--- If you’re using PostgreSQL, this works directly.
--- For MySQL, simulate with UNION of LEFT and RIGHT JOINs.
-
 -- PostgreSQL:
 SELECT u.id AS user_id,
        u.name AS user_name,
